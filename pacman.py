@@ -651,10 +651,14 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
         if record:
             import time, cPickle
             fname = ('recorded-game-%d' % (i + 1)) +  '-'.join([str(t) for t in time.localtime()[1:6]])
+            fnameNormal = fname + "-Normalized"
             f = file(fname, 'w')
+            f2 = file(fnameNormal, 'w')
             components = {'layout': layout, 'actions': game.moveHistory}
             cPickle.dump(components, f)
+            f2.write(str(components))
             f.close()
+            f2.close()
 
     if (numGames-numTraining) > 0:
         scores = [game.state.getScore() for game in games]
