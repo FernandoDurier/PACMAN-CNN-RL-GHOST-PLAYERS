@@ -554,7 +554,8 @@ def readCommand( argv ):
         options.numIgnore = int(agentOpts['numTrain'])
 
     # Choose a ghost agent
-    ghostType = loadAgent(options.ghost, noKeyboard)
+    #ghostType = loadAgent(options.ghost, noKeyboard) #Ghost not Playable
+    ghostType = loadAgent('KeyboardAgent2','') #Ghost Playable
     args['ghosts'] = [ghostType( i+1 ) for i in range( options.numGhosts )]
 
     # Choose a display format
