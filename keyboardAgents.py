@@ -85,10 +85,10 @@ class KeyboardAgent2(KeyboardAgent):
         legal = state.getLegalActions(self.index)
         move = self.getMove(legal)
 
-        if move == Directions.STOP:
-            # Try to move in the same direction as before
-            if self.lastMove in legal:
-                move = self.lastMove
+        # if move == Directions.STOP:
+        #     # Try to move in the same direction as before
+        #     if self.lastMove in legal:
+        #         move = self.lastMove
 
         if (self.STOP_KEY in self.keys) and Directions.STOP in legal: move = Directions.STOP
 
@@ -127,10 +127,10 @@ class KeyboardAgent3(KeyboardAgent):
         legal = state.getLegalActions(self.index)
         move = self.getMove(legal)
 
-        if move == Directions.STOP:
-            # Try to move in the same direction as before
-            if self.lastMove in legal:
-                move = self.lastMove
+        # if move == Directions.STOP:
+        #     # Try to move in the same direction as before
+        #     if self.lastMove in legal:
+        #         move = self.lastMove
 
         if (self.STOP_KEY in self.keys) and Directions.STOP in legal: move = Directions.STOP
 
@@ -169,10 +169,10 @@ class KeyboardAgent4(KeyboardAgent):
         legal = state.getLegalActions(self.index)
         move = self.getMove(legal)
 
-        if move == Directions.STOP:
-            # Try to move in the same direction as before
-            if self.lastMove in legal:
-                move = self.lastMove
+        # if move == Directions.STOP:
+        #     # Try to move in the same direction as before
+        #     if self.lastMove in legal:
+        #         move = self.lastMove
 
         if (self.STOP_KEY in self.keys) and Directions.STOP in legal: move = Directions.STOP
 
@@ -211,10 +211,10 @@ class KeyboardAgent5(KeyboardAgent):
         legal = state.getLegalActions(self.index)
         move = self.getMove(legal)
 
-        if move == Directions.STOP:
-            # Try to move in the same direction as before
-            if self.lastMove in legal:
-                move = self.lastMove
+        # if move == Directions.STOP:
+        #     # Try to move in the same direction as before
+        #     if self.lastMove in legal:
+        #         move = self.lastMove
 
         if (self.STOP_KEY in self.keys) and Directions.STOP in legal: move = Directions.STOP
 

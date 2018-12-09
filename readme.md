@@ -1,7 +1,15 @@
 #Modo Todo Manual do Jogo 
 ### Para tornar os ghosts manuais basta incluir em qualquer outro comando os seguintes args 
 ####-g ghostManual -G KeyboardAgent2,KeyboardAgent3,KeyboardAgent4,KeyboardAgent5
+
 python pacman.py -l mediumClassic4Ghosts -g ghostManual -G KeyboardAgent2,KeyboardAgent3,KeyboardAgent4,KeyboardAgent5
+
+#Com 4 fantasmas
+#Treinamento
+python pacman.py -p PacmanQAgent -n 3 -l mediumClassic4Ghosts -a numTraining=3
+
+#Mapa Original Clássico com Aproximação
+python pacman.py -p ApproximateQAgent -a extractor=SimpleExtractor -x 50 -n 53 -l mediumClassic4Ghosts -g ghostManual -G KeyboardAgent2,KeyboardAgent3,KeyboardAgent4,KeyboardAgent5
 
 # Q-learning
 # Aprendendo mapa pequeno
@@ -42,7 +50,7 @@ python pacman.py -p ApproximateQAgent -a extractor=SimpleExtractor -x 50 -n 53 -
 # Apos aprendizado mapa classico
 python pacman.py -p ApproximateQAgent -a extractor=SimpleExtractor -x 50 -n 53 -l mediumClassic 
 
-#Com 4 fantasmas
+#Com 4 fantasmas mapa original clássico
 #Treinamento
 python pacman.py -p PacmanQAgent -n 3 -l originalClassic -a numTraining=3
 

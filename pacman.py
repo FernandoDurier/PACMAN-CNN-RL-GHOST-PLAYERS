@@ -410,9 +410,11 @@ class GhostRules:
 
         legal = GhostRules.getLegalActions( state, ghostIndex )
         #print("Ghost Legal Actions: ", legal)
-        #print("Action: ", action)
+        #print("Ghost Action: ", action)
         if action not in legal:
             action = 'Stop'
+            print("Fantasma Bateu !!")
+            #print("Ghost Action deepois da Batida: ", action)
             #raise Exception("Illegal ghost action " + str(action))
 
         ghostState = state.data.agentStates[ghostIndex]
@@ -569,8 +571,8 @@ def readCommand( argv ):
     # Choose a ghost agent
     ghostType = None
     if options.ghostManual:
-        print('-------------------------------------------------------')
-        print("Manual Ghost Configs:\n", options.ghostManual.split(','))
+        #print('-------------------------------------------------------')
+        #print("Manual Ghost Configs:\n", options.ghostManual.split(','))
         args['ghostManual'] = True
         ghostType = []
         for config in options.ghostManual.split(','):
@@ -578,7 +580,7 @@ def readCommand( argv ):
         
         ghosts = []
         
-        print("ghostType: ", ghostType)
+        #print("ghostType: ", ghostType)
         for index, gType in enumerate(ghostType):
             ghosts.append(gType(index))
         
@@ -586,10 +588,10 @@ def readCommand( argv ):
     else:
         args['ghostManual'] = False
         ghostType = loadAgent(options.ghost, noKeyboard) #Ghost not Playable
-        print("ghostType: ", ghostType)
+        #print("ghostType: ", ghostType)
         args['ghosts'] = [ghostType( i+1 ) for i in range( options.numGhosts )]
-    print('-------------------------------------------------------')
-    print("Ghost Config: \n", args['ghosts'])
+    #print('-------------------------------------------------------')
+    #print("Ghost Config: \n", args['ghosts'])
 
     # Choose a display format
     if options.quietGraphics:
