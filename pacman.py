@@ -393,18 +393,27 @@ class GhostRules:
         conf = state.getGhostState( ghostIndex ).configuration
         possibleActions = Actions.getPossibleActions( conf, state.data.layout.walls )
         reverse = Actions.reverseDirection( conf.direction )
-        if Directions.STOP in possibleActions:
-            possibleActions.remove( Directions.STOP )
-        if reverse in possibleActions and len( possibleActions ) > 1:
-            possibleActions.remove( reverse )
+        #print("Game Args: ", args)
+        
+        if args['ghostManual']:
+            pass
+        else: 
+            if Directions.STOP in possibleActions:
+                possibleActions.remove( Directions.STOP )
+            if reverse in possibleActions and len( possibleActions ) > 1:
+                possibleActions.remove( reverse )
+
         return possibleActions
     getLegalActions = staticmethod( getLegalActions )
 
     def applyAction( state, action, ghostIndex):
 
         legal = GhostRules.getLegalActions( state, ghostIndex )
+        #print("Ghost Legal Actions: ", legal)
+        #print("Action: ", action)
         if action not in legal:
-            raise Exception("Illegal ghost action " + str(action))
+            action = 'Stop'
+            #raise Exception("Illegal ghost action " + str(action))
 
         ghostState = state.data.agentStates[ghostIndex]
         speed = GhostRules.GHOST_SPEED
@@ -505,6 +514,9 @@ def readCommand( argv ):
     parser.add_option('-g', '--ghosts', dest='ghost',
                       help=default('the ghost agent TYPE in the ghostAgents module to use'),
                       metavar = 'TYPE', default='RandomGhost')
+    parser.add_option('-G', '--ghostManual', dest='ghostManual',
+                      help=default('the ghost manual Config for ghostAgents module to use'),
+                      metavar = 'TYPE')
     parser.add_option('-k', '--numghosts', type='int', dest='numGhosts',
                       help=default('The maximum number of ghosts to use'), default=4)
     parser.add_option('-z', '--zoom', type='float', dest='zoom',
@@ -542,6 +554,7 @@ def readCommand( argv ):
     noKeyboard = options.gameToReplay == None and (options.textGraphics or options.quietGraphics)
     pacmanType = loadAgent(options.pacman, noKeyboard)
     agentOpts = parseAgentArgs(options.agentArgs)
+    print('Pacman Opts: ', agentOpts)
     if options.numTraining > 0:
         args['numTraining'] = options.numTraining
         if 'numTraining' not in agentOpts: agentOpts['numTraining'] = options.numTraining
@@ -554,9 +567,29 @@ def readCommand( argv ):
         options.numIgnore = int(agentOpts['numTrain'])
 
     # Choose a ghost agent
-    #ghostType = loadAgent(options.ghost, noKeyboard) #Ghost not Playable
-    ghostType = loadAgent('KeyboardAgent2','') #Ghost Playable
-    args['ghosts'] = [ghostType( i+1 ) for i in range( options.numGhosts )]
+    ghostType = None
+    if options.ghostManual:
+        print('-------------------------------------------------------')
+        print("Manual Ghost Configs:\n", options.ghostManual.split(','))
+        args['ghostManual'] = True
+        ghostType = []
+        for config in options.ghostManual.split(','):
+            ghostType.append(loadAgent(config, ''))
+        
+        ghosts = []
+        
+        print("ghostType: ", ghostType)
+        for index, gType in enumerate(ghostType):
+            ghosts.append(gType(index))
+        
+        args['ghosts'] = ghosts
+    else:
+        args['ghostManual'] = False
+        ghostType = loadAgent(options.ghost, noKeyboard) #Ghost not Playable
+        print("ghostType: ", ghostType)
+        args['ghosts'] = [ghostType( i+1 ) for i in range( options.numGhosts )]
+    print('-------------------------------------------------------')
+    print("Ghost Config: \n", args['ghosts'])
 
     # Choose a display format
     if options.quietGraphics:
@@ -628,7 +661,7 @@ def replayGame( layout, actions, display ):
 
     display.finish()
 
-def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0, catchExceptions=False, timeout=30 ):
+def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0, catchExceptions=False, timeout=30, ghostManual=False ):
     import __main__
     __main__.__dict__['_display'] = display
 

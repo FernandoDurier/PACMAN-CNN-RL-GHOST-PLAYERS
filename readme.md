@@ -36,3 +36,10 @@ python pacman.py -p ApproximateQAgent -a extractor=SimpleExtractor -x 50 -n 53 -
 
 # Apos aprendizado mapa classico
 python pacman.py -p ApproximateQAgent -a extractor=SimpleExtractor -x 50 -n 53 -l mediumClassic 
+
+#Com 4 fantasmas
+#Treinamento
+python pacman.py -p PacmanQAgent -n 3 -l originalClassic -a numTraining=3
+
+#Mapa Original Clássico com Aproximação
+python pacman.py -p ApproximateQAgent -a extractor=SimpleExtractor -x 50 -n 53 -l originalClassic

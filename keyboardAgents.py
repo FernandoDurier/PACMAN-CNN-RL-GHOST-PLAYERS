@@ -69,11 +69,34 @@ class KeyboardAgent2(KeyboardAgent):
     A second agent controlled by the keyboard.
     """
     # NOTE: Arrow keys also work.
-    WEST_KEY  = 'j'
-    EAST_KEY  = "l"
-    NORTH_KEY = 'i'
-    SOUTH_KEY = 'k'
-    STOP_KEY = 'u'
+    WEST_KEY  = 'f'
+    EAST_KEY  = "h"
+    NORTH_KEY = 't'
+    SOUTH_KEY = 'g'
+    STOP_KEY = 'r'
+
+    def getAction( self, state):
+        from graphicsUtils import keys_waiting
+        from graphicsUtils import keys_pressed
+        keys = keys_waiting() + keys_pressed()
+        if keys != []:
+            self.keys = keys
+
+        legal = state.getLegalActions(self.index)
+        move = self.getMove(legal)
+
+        if move == Directions.STOP:
+            # Try to move in the same direction as before
+            if self.lastMove in legal:
+                move = self.lastMove
+
+        if (self.STOP_KEY in self.keys) and Directions.STOP in legal: move = Directions.STOP
+
+        if move not in legal:
+            move = random.choice(legal)
+
+        self.lastMove = move
+        return move
 
     def getMove(self, legal):
         move = Directions.STOP
@@ -88,11 +111,34 @@ class KeyboardAgent3(KeyboardAgent):
     A third agent controlled by the keyboard.
     """
     # NOTE: Arrow keys also work.
-    WEST_KEY  = 'b'
-    EAST_KEY  = "m"
-    NORTH_KEY = 'h'
-    SOUTH_KEY = 'n'
-    STOP_KEY = 'g'
+    WEST_KEY  = 'j'
+    EAST_KEY  = "l"
+    NORTH_KEY = 'i'
+    SOUTH_KEY = 'k'
+    STOP_KEY = 'u'
+
+    def getAction( self, state):
+        from graphicsUtils import keys_waiting
+        from graphicsUtils import keys_pressed
+        keys = keys_waiting() + keys_pressed()
+        if keys != []:
+            self.keys = keys
+
+        legal = state.getLegalActions(self.index)
+        move = self.getMove(legal)
+
+        if move == Directions.STOP:
+            # Try to move in the same direction as before
+            if self.lastMove in legal:
+                move = self.lastMove
+
+        if (self.STOP_KEY in self.keys) and Directions.STOP in legal: move = Directions.STOP
+
+        if move not in legal:
+            move = random.choice(legal)
+
+        self.lastMove = move
+        return move
 
     def getMove(self, legal):
         move = Directions.STOP
@@ -112,6 +158,71 @@ class KeyboardAgent4(KeyboardAgent):
     NORTH_KEY = 'Up'
     SOUTH_KEY = 'Down'
     STOP_KEY = 'v'
+
+    def getAction( self, state):
+        from graphicsUtils import keys_waiting
+        from graphicsUtils import keys_pressed
+        keys = keys_waiting() + keys_pressed()
+        if keys != []:
+            self.keys = keys
+
+        legal = state.getLegalActions(self.index)
+        move = self.getMove(legal)
+
+        if move == Directions.STOP:
+            # Try to move in the same direction as before
+            if self.lastMove in legal:
+                move = self.lastMove
+
+        if (self.STOP_KEY in self.keys) and Directions.STOP in legal: move = Directions.STOP
+
+        if move not in legal:
+            move = random.choice(legal)
+
+        self.lastMove = move
+        return move
+
+    def getMove(self, legal):
+        move = Directions.STOP
+        if   (self.WEST_KEY in self.keys) and Directions.WEST in legal:  move = Directions.WEST
+        if   (self.EAST_KEY in self.keys) and Directions.EAST in legal: move = Directions.EAST
+        if   (self.NORTH_KEY in self.keys) and Directions.NORTH in legal:   move = Directions.NORTH
+        if   (self.SOUTH_KEY in self.keys) and Directions.SOUTH in legal: move = Directions.SOUTH
+        return move
+
+class KeyboardAgent5(KeyboardAgent):
+    """
+    A fourth agent controlled by the keyboard.
+    """
+    # NOTE: Arrow keys also work.
+    WEST_KEY  = 'z'
+    EAST_KEY  = 'c'
+    NORTH_KEY = 'x'
+    SOUTH_KEY = 'v'
+    STOP_KEY = 'b'
+
+    def getAction( self, state):
+        from graphicsUtils import keys_waiting
+        from graphicsUtils import keys_pressed
+        keys = keys_waiting() + keys_pressed()
+        if keys != []:
+            self.keys = keys
+
+        legal = state.getLegalActions(self.index)
+        move = self.getMove(legal)
+
+        if move == Directions.STOP:
+            # Try to move in the same direction as before
+            if self.lastMove in legal:
+                move = self.lastMove
+
+        if (self.STOP_KEY in self.keys) and Directions.STOP in legal: move = Directions.STOP
+
+        if move not in legal:
+            move = random.choice(legal)
+
+        self.lastMove = move
+        return move
 
     def getMove(self, legal):
         move = Directions.STOP
