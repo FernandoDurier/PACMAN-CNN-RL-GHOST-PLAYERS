@@ -1,3 +1,8 @@
+#Modo Todo Manual do Jogo 
+### Para tornar os ghosts manuais basta incluir em qualquer outro comando os seguintes args 
+####-g ghostManual -G KeyboardAgent2,KeyboardAgent3,KeyboardAgent4,KeyboardAgent5
+python pacman.py -l mediumClassic4Ghosts -g ghostManual -G KeyboardAgent2,KeyboardAgent3,KeyboardAgent4,KeyboardAgent5
+
 # Q-learning
 # Aprendendo mapa pequeno
 
