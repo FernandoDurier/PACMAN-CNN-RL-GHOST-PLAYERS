@@ -157,7 +157,7 @@ class KeyboardAgent4(KeyboardAgent):
     EAST_KEY  = 'Right'
     NORTH_KEY = 'Up'
     SOUTH_KEY = 'Down'
-    STOP_KEY = 'v'
+    STOP_KEY = 'm'
 
     def getAction( self, state):
         from graphicsUtils import keys_waiting
