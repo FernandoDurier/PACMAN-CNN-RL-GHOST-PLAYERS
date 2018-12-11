@@ -13,10 +13,19 @@
 
 
 from game import *
+from pacman import Directions
 from learningAgents import ReinforcementAgent
 from featureExtractors import *
+from keras.models import Sequential
+from keras.layers.core import Dense, Dropout, Activation
+from keras.layers import Conv2D
+from keras.optimizers import RMSprop, Adagrad
+
+import numpy as np
 
 import random,util,math
+from collections import deque
+
 
 class QLearningAgent(ReinforcementAgent):
     """
@@ -83,11 +92,14 @@ class QLearningAgent(ReinforcementAgent):
             return None
         
         q_max = max([self.getQValue(state, action) for action in legalActions])
-        return random.choice([
-            action
-            for action in legalActions
-            if self.getQValue(state, action) == q_max
-        ])
+        try:
+            return random.choice([
+                action
+                for action in legalActions
+                if self.getQValue(state, action) == q_max
+            ])
+        except:
+            l = [action for action in legalActions if self.getQValue(state, action) == q_max]
 
 
     def getAction(self, state):
@@ -219,6 +231,140 @@ class ApproximateQAgent(PacmanQAgent):
         for key, f in features.items():
             weights[key] = weights[key] + self.alpha * diff * f
 
+
+    def final(self, state):
+        "Called at the end of each game."
+        # call the super-class final method
+        PacmanQAgent.final(self, state)
+
+        # did we finish training?
+        if self.episodesSoFar == self.numTraining:
+            # you might want to print your weights here for debugging
+            "*** YOUR CODE HERE ***"
+            pass
+
+class NeuralNetQAgent(PacmanQAgent):
+    def __init__(self, extractor='IdentityExtractor', *args, **kwargs):
+        PacmanQAgent.__init__(self, *args, **kwargs)
+
+        model = Sequential()
+        model.add(Dense(256, init='lecun_uniform', input_shape=(1320,)))
+        model.add(Activation('relu'))
+
+        model.add(Dense(64, init='lecun_uniform'))
+        model.add(Activation('relu'))
+
+        model.add(Dense(5, init='lecun_uniform'))
+        model.add(Activation('softmax'))
+
+        opt = Adagrad(lr=self.alpha)
+        model.compile(loss='mse', optimizer=opt)
+
+        self.model = model
+        self.memory = deque(maxlen=2000)
+
+    def computeActionFromQValues(self, state):
+        """
+          Compute the best action to take in a state.  Note that if there
+          are no legal actions, which is the case at the terminal state,
+          you should return None.
+        """
+        "*** YOUR CODE HERE ***"
+        
+        legalActions = self.getLegalActions(state)
+        if not legalActions:
+            return None
+
+        qs = [self.getQValue(state, action) for action in legalActions]
+        q_max = max(qs)
+        return random.choice([
+            action
+            for action in legalActions
+            if self.getQValue(state, action) == q_max
+        ])
+
+    def getQValue(self, state, action):
+        x = np.zeros(shape=(1, 1320))
+        x[0] = self.transformState(state)
+        value = self.model.predict(
+            x,
+            batch_size=1,
+        )
+        return value[0][self.transformAction(action)]
+
+
+    def update(self, state, action, nextState, reward):
+        self.memory.append((state, action, nextState, reward))
+        batch_size = min(len(self.memory), 32)
+
+        for state, action, nextState, reward in random.sample(self.memory, batch_size):
+            q_max = self.computeValueFromQValues(nextState)
+            y_true = reward + (self.discount * q_max)
+            x = np.zeros(shape=(1, 1320))
+            x[0] = self.transformState(state)
+            y_pred = self.model.predict(x)
+            y_pred[0][self.transformAction(action)] = y_true
+
+            self.model.fit(x, y_pred, epochs=1, verbose=0)
+
+    def transformAction(self, action):
+        if action == Directions.WEST:
+            return 0
+        if action == Directions.EAST:
+            return 1
+        if action == Directions.NORTH:
+            return 2
+        if action == Directions.SOUTH:
+            return 3
+        if action == Directions.STOP:
+            return 4
+
+    def transformState(self, state):
+        shape = (
+            state.data.layout.height,
+            state.data.layout.width,
+        )
+
+        walls = np.array(
+            map(
+                lambda row: map(int, row),
+                state.getWalls().data
+            ),
+            dtype=np.int8,
+        ).T #transpose
+
+        food = np.array(
+            map(
+                lambda row: map(int, row),
+                state.getFood().data
+            ),
+            dtype=np.int8,
+        ).T #transpose
+
+        pacman = np.zeros(shape, dtype=np.int8)
+        pos_x, pos_y = state.getPacmanPosition()
+        pacman[pos_y][pos_x] = 1
+
+        ghosts = np.zeros(shape, dtype=np.int8)
+        scared_ghosts = np.zeros(shape, dtype=np.int8)
+        for ghost in state.getGhostStates():
+            pos_x, pos_y = ghost.getPosition()
+            pos_x = int(pos_x)
+            pos_y = int(pos_y)
+            if ghost.scaredTimer > 0:
+                scared_ghosts[pos_y][pos_x] = 1
+            else:
+                ghosts[pos_y][pos_x] = 1
+
+        capsules = np.zeros(shape, dtype=np.int8)
+        for capsule in state.getCapsules():
+            pos_x, pos_y = capsule
+            capsules[pos_y][pos_x] = 1
+
+        transformed_state = np.concatenate((walls, pacman, food, capsules, ghosts, scared_ghosts), axis=None)
+
+        return transformed_state
+        
 
     def final(self, state):
         "Called at the end of each game."
